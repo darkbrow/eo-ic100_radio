@@ -56,11 +56,15 @@ class BesFM_Enums(Enum):
     BAND_64MHz_76MHz = 3
 
 class BesFM:
+    # def __init__(self, dev: usb.core.Device):
+    #     self._dev = dev
+    #     if self._dev.is_kernel_driver_active(4):
+    #         self._dev.detach_kernel_driver(4)
+    #     self._notify_ep = self._dev.get_active_configuration()[4,0][0]
+
     def __init__(self, dev: usb.core.Device):
         self._dev = dev
-        if self._dev.is_kernel_driver_active(4):
-            self._dev.detach_kernel_driver(4)
-        self._notify_ep = self._dev.get_active_configuration()[4,0][0]
+        self._notify_ep = None  # 분리/클레임 없이 control transfer만 사용
 
     def _set(self, cmd, value):
         self._dev.ctrl_transfer(

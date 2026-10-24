@@ -6,6 +6,12 @@ import besfm
 import time
 import usb.core
 
+try:
+    from live_monitor import LiveFrame
+except (ImportError, OSError) as e:  # sounddevice/numpy/PortAudio 문제 시 라이브 청취 없이 동작
+    LiveFrame = None
+    print(f"Live listen disabled: {e}")
+
 '''
 GUI FM radio control program
 '''
@@ -36,6 +42,44 @@ class MainApp(ic100_radio_gui.MainApp):
             self.update_frequency()
             self.update_volume()
             self.update_mute()
+
+        # 종료 시 라디오 전원 끄기 (창 닫기 / macOS Cmd+Q)
+        self._tk_root = master
+        self._shut_down = False
+        master.protocol("WM_DELETE_WINDOW", self.on_close)
+        try:
+            master.createcommand('::tk::mac::Quit', self.on_close)
+        except tk.TclError:
+            pass
+
+        # Record 모드의 라디오 오디오를 맥 출력으로 듣는 제어부 (메인 창 3~5행)
+        self._live = None
+        if LiveFrame is not None:
+            try:
+                self._live = LiveFrame(master, lambda: self.record)
+                self._live.grid(row=3, column=0, columnspan=6,
+                                sticky="ew", padx=4, pady=4)
+            except Exception as e:
+                print(f"Live listen disabled: {e}")
+
+    def shutdown(self):
+        # 라디오가 켜져 있으면 끈다. 여러 번 호출해도 한 번만 실행된다.
+        if self._shut_down:
+            return
+        self._shut_down = True
+        if getattr(self, '_live', None) is not None:
+            self._live.stop()
+        try:
+            if self.fm.get_power():
+                self.fm.set_power(False)
+            elif self.fm.get_recording():
+                self.fm.set_recording(False)
+        except Exception as e:
+            print(f"Failed to power off: {e}")
+
+    def on_close(self):
+        self.shutdown()
+        self._tk_root.destroy()
 
     def cb_power(self):
         if self.power:
@@ -146,8 +190,17 @@ class MainApp(ic100_radio_gui.MainApp):
         else:
             self.btn_record['relief'] = 'raised'
 
+        # Record 모드가 아니면 입력이 이어폰 마이크라서 라이브 청취를 멈춘다.
+        live = getattr(self, '_live', None)
+        if live is not None and not self.record:
+            live.stop()
+
 
 if __name__ == '__main__':
     root = tk.Tk()
     app = MainApp(root)
-    root.mainloop()
+    try:
+        root.mainloop()
+    finally:
+        # 예외나 Ctrl+C로 종료되는 경우에도 전원 끄기를 시도한다.
+        app.shutdown()
