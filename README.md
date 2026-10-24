@@ -33,5 +33,5 @@ pip install pyusb pyserial sounddevice numpy
 ## 사용 방법
 EO-IC100 이어폰을 PC의 USB-C 포트에 연결합니다.
 ```
-python ic100_radio_gui.py
+python ic100_radio.py
 ```
