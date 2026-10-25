@@ -31,7 +31,9 @@ pip install pyusb pyserial sounddevice numpy
 - besfm.py: 라디오 제어 관련 보조 스크립트
 
 ## 사용 방법
-EO-IC100 이어폰을 PC의 USB-C 포트에 연결합니다.
+- 필수 라이브러리를 설치합니다.
+- EO-IC100 이어폰을 PC의 USB-C 포트에 연결합니다.
+- 터미널에 다음 명령을 입력하여 실행합니다.
 ```
 python ic100_radio.py
 ```
