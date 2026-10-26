@@ -1,6 +1,6 @@
 # EO-IC100 FM Radio (Python PoC)
 
-이 프로젝트는 @kjy00302/eo-ic100_radio 의 작업을 기반으로 일부를 수정하여 정리한 EO-IC100 FM 라디오 제어 실험 코드입니다. 핵심 동작은 동일하게 삼성 이어폰의 FM 라디오 기능을 USB 제어로 켜고, 주파수를 맞추고, 음량과 RDS를 다루는 것입니다.
+이 프로젝트는 [@kjy00302/eo-ic100_radio](https://github.com/kjy00302/eo_ic100_radio_mac) 의 작업을 기반으로 일부를 수정하여 정리한 EO-IC100 FM 라디오 제어 실험 코드입니다. 핵심 동작은 동일하게 삼성 이어폰의 FM 라디오 기능을 USB 제어로 켜고, 주파수를 맞추고, 음량과 RDS를 다루는 것입니다. Swift로 작성된 맥 네이티브 앱은 [@darkbrow/eo_ic100_radio_mac](https://github.com/darkbrow/eo_ic100_radio_mac) 저장소에 있습니다.
 
 ## 프로젝트 목적
 
@@ -11,7 +11,7 @@
 
 ## 기반 코드와 수정 내용
 
-기본 구조는 @kjy00302/eo-ic100_radio 의 `besfm.py`, `ic100_radio.py`, `live_monitor.py`를 따라가며, 아래와 같은 변경을 반영했습니다.
+기본 구조는 [@kjy00302/eo-ic100_radio](https://github.com/kjy00302/eo_ic100_radio_mac) 의 `besfm.py`, `ic100_radio.py`, `live_monitor.py`를 따라가며, 아래와 같은 변경을 반영했습니다.
 
 ### 1. USB 접근 방식 정리
 기존 코드에서 `BesFM.__init__`는 USB 디바이스를 분리하거나 커널 드라이버를 떼어내는 처리와 notify endpoint 사용을 전제로 하고 있습니다.
